@@ -23,45 +23,41 @@ const generateToken=(id)=>{
   }
 // Create User
 const createUser = asyncHandler(async (req, res) => {
-  const { name, email,password } = req.body;
-  //   Validation
-  if (!name || !email || !password) {
+  try{
+    const { name, email,password } = req.body;
+    
+   //   Validation
+   if (!name || !email || !password) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
-
-  // Handle Image upload
-  let fileData = {};
-    if (req.file) {  
-      fileData = {
-        fileName:`${day+"-"+month+"-"+year + "-" + req.file.originalname}`,
-        fileLocalPath:`${req.protocol}://${req.headers.host}/${day+"-"+month+"-"+year + "-" + req.file.originalname}`,
-        fileType: req.file.mimetype,
-        fileSize: fileSizeFormatter(req.file.size, 2),
-      };
-  } 
-  // Create Product
   const user = await UserModel.create({
     name, email,password, 
-    image: fileData,
+    
   });
   const token=generateToken(user._id)
   if(user){ 
     const {_id,name,email,image,phone}=user
-    res.status(201).json({
-        _id,
-        name,email,image,phone,token,  
-    })
+    res
+    .status(200)
+    .json({ status: "success", token: token, data:{_id,name,email,image,phone} });
   }else{
-
+    
+    res.status(404);
+    throw new Error("User not create");
   }
+  }catch(err){
+    res.status(404);
+    throw new Error("User already exists");
+  }
+ 
 });
 
 
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
   let userId = req.headers["user"];
-  console.log(req.body)
+ 
   
   const user = await UserModel.findById(userId);
 
@@ -175,13 +171,6 @@ const login=asyncHandler(async (req,res)=>{
 
   const token=generateToken(user._id)
 
-  // res.cookie("token",token, {
-  //     path:"/",
-  //     httpOnly:true,
-  //     expires:new Date(Date.now()+ 1000 * 86400),
-  //     sameSite:"none",
-      
-  // })
   if(user && passwordIsCorrrect){
       const {_id,name,email,image,phone}=user
         

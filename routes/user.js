@@ -10,7 +10,7 @@ router.get('/',test)
 router.post('/login',login)
 router.get('/user',protect,getUser)
 router.put('/user',upload.single("image"),protect,updateUser)
-router.post('/register',upload.single('image'), createUser)
+router.post('/register', createUser)
 
 
 module.exports=router;

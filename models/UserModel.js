@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt=require('bcrypt')
+const bcrypt = require("bcrypt");
 const { ObjectId } = mongoose.Schema.Types;
 
 const userSchema = mongoose.Schema(
@@ -15,31 +15,38 @@ const userSchema = mongoose.Schema(
         "Please enter a valid email",
       ],
     },
-    password: { type: String, required: [true, "Please add a Password"],
-    minLength:[6," Password must be up to 6 characters"]
-   },
-   phone:{
-    type:String,
-    default:"01XXXXXXXXX"
-  },
+    password: {
+      type: String,
+      required: [true, "Please add a Password"],
+      minLength: [6, " Password must be up to 6 characters"],
+    },
+    phone: {
+      type: String,
+      default: "01XXXXXXXXX",
+    },
     image: {
       type: Object,
-      default: {},
+      default: {
+       
+fileName:"30-11-2022-default.png",
+fileLocalPath:"http://localhost:5000/30-11-2022-default.png",
+fileType:"image/png",
+fileSize:"36.07 KB"
+      },
     },
   },
-  { timestamps: true,versionKey: false }
+  { timestamps: true, versionKey: false }
 );
 
-userSchema.pre("save", async function(next){
-
-  if(!this.isModified("password")){
-return next()
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
   }
 
-  const salt =await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(this.password,salt)
-  this.password=hashedPassword;
-  next()
-})
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+  this.password = hashedPassword;
+  next();
+});
 const User = mongoose.model("user", userSchema);
 module.exports = User;
