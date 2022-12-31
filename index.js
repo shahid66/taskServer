@@ -13,7 +13,7 @@ const path = require("path");
 
 
 app.use(cors())
-// app.use(cors({credentials:true, origin:'http://localhost:3000'}))
+// app.use(cors({credentials:true, origin:'http://taskmanagertwo.khandokershahid.com'}))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
@@ -27,8 +27,11 @@ readdirSync("./routes").map(r => app.use("/api/v1", require(`./routes/${r}`)))
 
 const PORT=process.env.PORT || 5000;
 app.use(errorHandlear)
-mongoose.connect(process.env.DATABASE).then(()=>{
-    app.listen(PORT,()=>{
-        console.log(`Server is running on port ${PORT}`)
-    })
-})
+mongoose
+    .connect(process.env.DATABASE)
+    .then(() => console.log("DB connected successfully"))
+    .catch((err) => console.log("DB Error => ", err));
+
+    app.listen(PORT, () => {
+        console.log(`App is  running on port ${PORT}`);
+    });
