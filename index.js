@@ -24,7 +24,9 @@ app.use(express.static("uploads"))
 
 // routes middleware
 readdirSync("./routes").map(r => app.use("/api/v1", require(`./routes/${r}`)))
-
+app.use('/',(req,res)=>{
+    res.json({message:"Hello"})
+})
 const PORT=process.env.PORT || 5000;
 app.use(errorHandlear)
 mongoose
