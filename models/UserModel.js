@@ -28,8 +28,8 @@ const userSchema = mongoose.Schema(
       type: Object,
       default: {
        
-fileName:"30-11-2022-default.png",
-fileLocalPath:"http://localhost:5000/30-11-2022-default.png",
+fileName:"default.png",
+fileLocalPath:"http://localhost:5000/default.png",
 fileType:"image/png",
 fileSize:"36.07 KB"
       },

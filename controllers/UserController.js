@@ -7,6 +7,8 @@ const fs = require('fs')
 const { promisify } = require('util');
 const path = require("path");
 const UserModel = require("../models/UserModel");
+const OTPModel = require("../models/OTPModel");
+const EmailUtility = require("../helpers/NodeMailer");
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -56,6 +58,7 @@ const createUser = asyncHandler(async (req, res) => {
 
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
+  console.log(req.headers)
   let userId = req.headers["user"];
  
   
@@ -67,10 +70,14 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.file) {
       
       filePath = path.join( 'uploads',user.image.fileName);
-      const IsFile=fs.existsSync(filePath)
-     if(IsFile){
-      unlinkAsync(filePath)
-     }
+      console.log(user.image.fileName)
+      if(user.image.fileName!=="default.png"){
+        const IsFile=fs.existsSync(filePath)
+        if(IsFile){
+         unlinkAsync(filePath)
+        }
+      }
+     
 
 
       
@@ -182,9 +189,94 @@ const login=asyncHandler(async (req,res)=>{
       throw new Error ("Invalid Email or Password") 
   }
 })
-const test = asyncHandler(async (req, res) => {
+const recovary = asyncHandler(async (req, res) => {
+  let email = req.params.email;
 
-  res.status(201).json({message:"hoise"});
+  let OTPCode = Math.floor(10000 + Math.random() * 900000);
+
+  try {
+    //Email Query
+    let UserCount = await UserModel.aggregate([
+      { $match: { email: email } },
+      { $count: "total" },
+    ]);
+
+    if (UserCount[0].total > 0) {
+      
+      //OTP insert
+      let CreateOTP = await OTPModel.create({ email: email, otp: OTPCode });
+      
+      //Email send
+      let SendMail = await EmailUtility(
+        email,
+        "Your PIN Code= " + OTPCode,
+        "Task Manager PIN Verification"
+      );
+
+      res.status(200).json({ status: "success", data: SendMail,email });
+    } else {
+      res.status(200).json({ status: "fail", data: "No User Found" });
+    }
+  } catch (e) {
+    res.status(200).json({ status: "fail", data: e });
+  }
+});
+const recovaryOTP = asyncHandler(async (req, res) => {
+  let email = req.params.email;
+  let OTP = req.params.OTP;
+  let status=0;
+  let UpdateStatus=1;
+  
+
+  try {
+    //Email Query
+    let CountOTP = await OTPModel.aggregate([{$match:{email:email, otp: OTP,status:status  }},{$count:'total'}]);
+
+    if (CountOTP[0].total >  0) {
+      //OTP Update
+     let UpdateOTPStatus= await OTPModel.updateOne({email:email, otp: OTP,status:status},{email:email, otp: OTP,status:UpdateStatus})
+     
+
+      res.status(200).json({ status: "success", data: UpdateOTPStatus });
+    } else {
+      res.status(200).json({ status: "fail", data: "Invalid OTP" });
+    }
+  } catch (e) {
+    res.status(200).json({ status: "failr", data: e });
+  }
+});
+const createPassword = asyncHandler(async (req, res) => {
+  console.log(req.body)
+  let email = req.body.email;
+  let OTPCode=req.body.otp
+  let password = req.body.password;
+  let UpdateStatus=1;
+  
+console.log(email,OTPCode,password)
+  try {
+    //Email Query
+    let CountOTP = await OTPModel.aggregate([{$match:{email:email, otp: OTPCode,status:UpdateStatus  }},{$count:'total'}]);
+console.log(CountOTP)
+    if (CountOTP[0].total >  0) {
+      //OTP Update
+      console.log(CountOTP[0].total)
+     let UpdatePassword= await UserModel.findOne({email:email,})
+     if(UpdatePassword){
+      UpdatePassword.password=password
+      UpdatePassword.save()
+      res.status(200).json({ status: "success", data: UpdatePassword });
+     }else{
+      res.status(200).json({ status: "fail", data: "Invalid OTP" });
+     }
+     
+
+      
+    } else {
+      res.status(200).json({ status: "fail", data: "Invalid OTP" });
+    }
+  } catch (e) {
+    res.status(200).json({ status: "failr", data: e });
+  }
 });
 
 
@@ -198,7 +290,8 @@ module.exports = {
   getUser,
   login,
   updateUser,
-
-  test
+  createPassword,
+  recovary,
+  recovaryOTP
  
 };
