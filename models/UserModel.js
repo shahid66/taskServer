@@ -28,10 +28,10 @@ const userSchema = mongoose.Schema(
       type: Object,
       default: {
        
-fileName:null,
-fileLocalPath:null,
-fileType:null,
-fileSize:null
+fileName:"",
+fileLocalPath:"",
+fileType:"",
+fileSize:""
       },
     },
   },
