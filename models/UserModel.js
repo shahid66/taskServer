@@ -27,11 +27,10 @@ const userSchema = mongoose.Schema(
     image: {
       type: Object,
       default: {
-       
-fileName:"",
-fileLocalPath:"",
-fileType:"",
-fileSize:""
+        fileName: "",
+        fileLocalPath: "",
+        fileType: "",
+        fileSize: "",
       },
     },
   },
