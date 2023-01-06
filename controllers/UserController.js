@@ -58,7 +58,7 @@ const createUser = asyncHandler(async (req, res) => {
 
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
-  console.log(req.headers)
+ 
   let userId = req.headers["user"];
  
   
@@ -70,13 +70,13 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.file) {
       
       filePath = path.join( 'uploads',user.image.fileName);
-      console.log(user.image.fileName)
-      if(user.image.fileName!=="default.png"){
-        const IsFile=fs.existsSync(filePath)
-        if(IsFile){
-         unlinkAsync(filePath)
-        }
-      }
+      
+      // if(user.image.fileName!=="default.png"){
+      //   const IsFile=fs.existsSync(filePath)
+      //   if(IsFile){
+      //    unlinkAsync(filePath)
+      //   }
+      // }
      
 
 
@@ -246,20 +246,20 @@ const recovaryOTP = asyncHandler(async (req, res) => {
   }
 });
 const createPassword = asyncHandler(async (req, res) => {
-  console.log(req.body)
+  
   let email = req.body.email;
   let OTPCode=req.body.otp
   let password = req.body.password;
   let UpdateStatus=1;
   
-console.log(email,OTPCode,password)
+
   try {
     //Email Query
     let CountOTP = await OTPModel.aggregate([{$match:{email:email, otp: OTPCode,status:UpdateStatus  }},{$count:'total'}]);
-console.log(CountOTP)
+
     if (CountOTP[0].total >  0) {
       //OTP Update
-      console.log(CountOTP[0].total)
+      
      let UpdatePassword= await UserModel.findOne({email:email,})
      if(UpdatePassword){
       UpdatePassword.password=password

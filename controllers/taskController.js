@@ -77,7 +77,7 @@ const taskSearchByMonth = asyncHandler(async (req, res) => {
 
 // const task = await TaskModel.find({$and:[{user:req.headers.user},{date:d}]});
 const task = await TaskModel.find({$and:[{user:req.headers.user},{month:req.params.month}]});
-console.log(task)
+
   res.status(201).json(task);
 
 
@@ -104,7 +104,7 @@ const statusChangeTask = asyncHandler(async (req, res) => {
   const task = await TaskModel.updateOne({$and:[{_id:tId},{user:object}]},{
     taskstatus:bodyData.status
   });
-  console.log(task)
+  
 
   res.status(201).json(task);
 });
