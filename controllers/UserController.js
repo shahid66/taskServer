@@ -216,10 +216,10 @@ const recovary = asyncHandler(async (req, res) => {
 
       res.status(200).json({ status: "success", data: SendMail,email });
     } else {
-      res.status(200).json({ status: "fail", data: "No User Found" });
+      res.status(404).json({ status: "fail", data: "No User Found" });
     }
   } catch (e) {
-    res.status(200).json({ status: "fail", data: e });
+    res.status(404).json({ status: "fail", data: e });
   }
 });
 const recovaryOTP = asyncHandler(async (req, res) => {
@@ -240,10 +240,10 @@ const recovaryOTP = asyncHandler(async (req, res) => {
 
       res.status(200).json({ status: "success", data: UpdateOTPStatus });
     } else {
-      res.status(200).json({ status: "fail", data: "Invalid OTP" });
+      res.status(404).json({ status: "fail", data: "Invalid OTP" });
     }
   } catch (e) {
-    res.status(200).json({ status: "failr", data: e });
+    res.status(404).json({ status: "failr", data: e });
   }
 });
 const createPassword = asyncHandler(async (req, res) => {

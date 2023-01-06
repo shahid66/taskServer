@@ -2,17 +2,7 @@ const nodemailer = require("nodemailer");
   // create reusable transporter object using the default SMTP transport
 
  const EmailUtility=async (EmailTo,EmailText,EmailSubject)=>{
-    // let transporter = nodemailer.createTransport({
-    //     host: "mail.teamrabbil.com",
-    //     port: 25,
-    //     secure: false, 
-    //     auth: {
-    //       user: "info@teamrabbil.com", 
-    //       pass: '~sR4[bhaC[Qs', 
-    //     },tls:{
-    //         rejectUnauthorized: false
-    //     }
-    //   });
+
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       
