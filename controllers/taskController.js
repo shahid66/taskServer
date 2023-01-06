@@ -26,7 +26,7 @@ let splitDate=stringDate.split("T")
 let ca=splitDate[0]
 let cd=ca.split('-')
 let chaiDate=cd[2]+'/'+cd[1]+'/'+cd[0]
-
+console.log(chaiDate)
   //   Validation
   if (!task || !taskpriority || !date || !description ) {
     res.status(400);
@@ -65,19 +65,77 @@ const task = await TaskModel.find({$and:[{user:req.headers.user},{taskstatus:req
 
 });
 const taskSearchByToday = asyncHandler(async (req, res) => {
+  let day
+  if(req.params.day==1){
+    day="01"
+  }else if(req.params.day==2){
+    day="02"
+  }
+  else if(req.params.day==3){
+    day="03"
+  }
+  else if(req.params.day==4){
+    day="04"
+  }
+  else if(req.params.day==5){
+    day="05"
+  }
+  else if(req.params.day==6){
+    day="06"
+  }
+  else if(req.params.day==7){
+    day="07"
+  }
+  else if(req.params.day==8){
+    day="08"
+  }
+  else if(req.params.day==9){
+    day="09"
+  }else{
+    day=req.params.day
+  }
  
-const task = await TaskModel.find({$and:[{user:req.headers.user},{day:req.params.day}]});
+const task = await TaskModel.find({$and:[{user:req.headers.user},{day:day}]});
  
   res.status(201).json(task);
 
 
 });
 const taskSearchByMonth = asyncHandler(async (req, res) => {
+  let month
+  if(req.params.month==1){
+    month="01"
+  }else if(req.params.month==2){
+    month="02"
+  }
+  else if(req.params.month==3){
+    month="03"
+  }
+  else if(req.params.month==4){
+    month="04"
+  }
+  else if(req.params.month==5){
+    month="05"
+  }
+  else if(req.params.month==6){
+    month="06"
+  }
+  else if(req.params.month==7){
+    month="07"
+  }
+  else if(req.params.month==8){
+    month="08"
+  }
+  else if(req.params.month==9){
+    month="09"
+  }else{
+    month=req.params.month
+  }
   
 
 // const task = await TaskModel.find({$and:[{user:req.headers.user},{date:d}]});
-const task = await TaskModel.find({$and:[{user:req.headers.user},{month:req.params.month}]});
-
+const task = await TaskModel.find({$and:[{user:req.headers.user},{month:month}]});
+console.log(task)
   res.status(201).json(task);
 
 
