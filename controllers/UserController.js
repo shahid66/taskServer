@@ -191,9 +191,10 @@ const login=asyncHandler(async (req,res)=>{
 })
 const recovary = asyncHandler(async (req, res) => {
   let email = req.params.email;
-
-  let OTPCode = Math.floor(10000 + Math.random() * 900000);
-
+  let minm = 100000;
+  let maxm = 999999;
+  let OTPCode = Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+  
   try {
     //Email Query
     let UserCount = await UserModel.aggregate([
