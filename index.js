@@ -1,34 +1,44 @@
-const express =require('express');
+const express = require("express");
+const app = express();
+const helmet = require("helmet");
+const mongoose = require("mongoose");
+require("dotenv").config();
+const morgan = require("morgan");
+const cors = require("cors");
 const { readdirSync } = require("fs");
-const cors =require('cors');
-const mongoose=require('mongoose');
-
-const errorHandlear = require('./middleware/errorMiddleware');
-const cookieParser = require('cookie-parser')
-const dotenv=require('dotenv').config();
-const app=express()
-const helmet = require('helmet');
+const router = require("./src/routes/api");
 const path = require("path");
 
-
-
-app.use(cors())
-
-
-app.use(express.json())
+// middlewares
+app.use(helmet());
+app.use(express.static("public"));
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(morgan("dev"));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static("uploads"))
+// DB Connection
+mongoose
+  .connect(process.env.DATABASE)
+  .then(() => console.log("DB connected successfully"))
+  .catch((err) => console.log("DB Error => ", err));
 
 // routes middleware
-readdirSync("./routes").map(r => app.use("/api/v1", require(`./routes/${r}`)))
-app.use('/',(req,res)=>{
-    res.json({message:"Hello"})
-})
-const PORT=process.env.PORT || 5000;
+app.use(router);
 
-app.listen(PORT, () => {
-    console.log('Server is running on port 5000');
-  });
+app.use(express.static("client/build"));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+});
+
+// server\
+
+const port = process.env.PORT || 9000;
+
+app.listen(port, () => {
+  console.log(`App is  running on port ${port}`);
+});
